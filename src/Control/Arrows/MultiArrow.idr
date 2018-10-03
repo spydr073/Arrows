@@ -93,7 +93,7 @@ export
 --{1
 
 infixr 8 :+:
-||| Coroduct between two arrows.
+||| Coproduct between two arrows.
 export
 (:+:) : (Ord a) => MSet a -> MSet a -> MSet a
 (:+:) = union
