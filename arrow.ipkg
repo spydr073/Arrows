@@ -1,0 +1,8 @@
+package arrow
+
+sourcedir = src
+pkgs      = aa_tree
+
+modules   = Control.Arrows.MultiArrow
+
+
