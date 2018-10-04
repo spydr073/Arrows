@@ -9,10 +9,9 @@
 --                                                                             APPROVED
 --
 -- Model finite functions that may not be surjective. This is achieved by using a finite mapping
--- from each element in the domain to a multiset of reachable elements in the codomain. Note that
--- as this module has been written, we get Arrow composition for free!
+-- from each element in the domain to a multiset of reachable elements in the codomain.
 
-module Arrow
+module Control.Arrows.MultiArrow
 
 import Data.AA.Map
 import Data.AA.Set.MultiSet      as  MSet
@@ -32,6 +31,7 @@ mkRel : (Ord a, Ord b) => List (a,b) -> IMSet a b
 mkRel = foldr (\(k,v),r => insert k (MSet.fromList [v]) r) empty
 
 ||| Apply a multiset to a relation, treating the relation like a function.
+||| Notice that this gives us Arrow composition for free!
 export
 app : (Ord a, Ord b) => (f : IMSet a b) -> (xs : MSet a) -> MSet b
 app f xs = foldr alg empty xs
@@ -68,7 +68,7 @@ project f xs = Foldable.foldr (\x,b => insert x (f $ MSet.fromList [x]) b) empty
 -- Take the cross product between two relations iff the elements share their domain element.
 zipEq : (Ord a, Ord b, Ord c) => IMSet a b -> IMSet a c -> IMSet a (b,c)
 zipEq xs ys = foldr alg empty xs
-  where alg : Cell a b -> IMSet a (b,c) -> IMSet a (b,c)
+  where alg : IMSet.Cell a b -> IMSet a (b,c) -> IMSet a (b,c)
         alg (Bin i x) bag with (IMSet.find i ys)
           | Nothing = bag
           | Just y  = let vs = MSet.fromList [(x',y') | x' <- elems x, y' <- elems y]
@@ -84,7 +84,7 @@ export
     bag : IMSet a (b,c)
     bag = zipEq (project f xs) (project g xs)
 
-    alg : Cell a (b,c) -> MSet (b,c) -> MSet (b,c)
+    alg : IMSet.Cell a (b,c) -> MSet (b,c) -> MSet (b,c)
     alg (Bin i x) set = union x set
 
 --}
